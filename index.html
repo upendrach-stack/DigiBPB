@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPB Offshore Dashboard</title>
+
+    <!-- All CSS inline (no external CDN references) -->
+    <style>
+        /* === Reset & Base === */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* === Gradient Panel (Left Side) === */
+        .gradient-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 32%;
+            height: 100vh;
+            background: linear-gradient(180deg, #0a1628 0%, #0d2847 40%, #0d4f4f 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            z-index: 10;
+        }
+
+        .gradient-panel__logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e8a838 0%, #d4912a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(232, 168, 56, 0.3);
+        }
+
+        .gradient-panel__logo-text {
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .gradient-panel__title {
+            color: #ffffff;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .gradient-panel__subtitle {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .gradient-panel__tagline {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* === Content Area (Right Panel) === */
+        .content-area {
+            margin-left: 32%;
+            width: 68%;
+            min-height: 100vh;
+            background: #f5f7fa;
+            padding: 2.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-area__header {
+            margin-bottom: 2rem;
+        }
+
+        .content-area__title {
+            color: #0a1628;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+
+        .content-area__subtitle {
+            color: #0d4f4f;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.85;
+        }
+
+        /* === KPI Cards Grid === */
+        .kpi-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        /* Responsive breakpoints for KPI cards grid */
+        @media (max-width: 1024px) {
+            .kpi-cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.25rem;
+            }
+        }
+
+        /* === Dashboard Footer === */
+        .dashboard-footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e4e8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .role-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.3rem 0.85rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #ffffff;
+            border-radius: 999px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .role-badge--admin {
+            background: #0d4f4f;
+        }
+
+        .role-badge--departments {
+            background: #0d2847;
+        }
+
+        .role-badge--oim {
+            background: #1a6b6b;
+        }
+
+        .role-badge--viewer {
+            background: #163a5f;
+        }
+
+        .role-description {
+            font-size: 0.7rem;
+            color: #5a6a7a;
+            padding-left: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .gradient-panel {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 1.5rem;
+            }
+
+            .content-area {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem;
+            }
+
+            body {
+                flex-direction: column;
+            }
+
+            .kpi-cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* === KPI Card Panel Styles === */
+        .kpi-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(10, 22, 40, 0.08);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+            border-top: 3px solid #0d9f9f;
+        }
+
+        .kpi-card:hover {
+            box-shadow: 0 6px 24px rgba(13, 159, 159, 0.15);
+            transform: translateY(-2px);
+            border-top-color: #14c8c8;
+            background-color: rgba(13, 159, 159, 0.03);
+        }
+
+        .kpi-card:focus-visible {
+            outline: 2px solid #0d9f9f;
+            outline-offset: 2px;
+        }
+
+        /* === KPI Card Content Styles === */
+        .kpi-card__icon {
+            width: 48px;
+            height: 48px;
+            color: #0d9f9f;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-card__icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .kpi-card__title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0a1628;
+            margin-bottom: 0.4rem;
+        }
+
+        .kpi-card__description {
+            font-size: 0.82rem;
+            color: #5a6a7a;
+            line-height: 1.4;
+        }
+
+        /* Responsive adjustments for KPI cards */
+        @media (max-width: 1024px) {
+            .kpi-card {
+                padding: 1.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-card {
+                padding: 1.25rem;
+                border-radius: 10px;
+            }
+        }
+
+        /* === KPI Card Unavailable State === */
+        .kpi-card--unavailable {
+            opacity: 0.6;
+            border-top-color: #b0b8c4;
+            position: relative;
+        }
+
+        .kpi-card--unavailable:hover {
+            border-top-color: #b0b8c4;
+            background-color: transparent;
+            transform: none;
+            box-shadow: 0 2px 12px rgba(10, 22, 40, 0.08);
+        }
+
+        .kpi-card__unavailable-badge {
+            display: none;
+            font-size: 0.7rem;
+            color: #b0503a;
+            background: #fdecea;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            margin-top: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .kpi-card--unavailable .kpi-card__unavailable-badge {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Gradient Panel (Left Side) - Branding & Platform Identity -->
+    <aside class="gradient-panel" aria-label="Platform branding">
+        <div class="gradient-panel__logo" aria-hidden="true">
+            <span class="gradient-panel__logo-text">ONGC</span>
+        </div>
+        <h1 class="gradient-panel__title">BPB Platform</h1>
+        <p class="gradient-panel__subtitle">NH&amp;BS ASSET &bull; MUMBAI OFFSHORE</p>
+        <p class="gradient-panel__tagline">Your Digital Offshore Hub</p>
+    </aside>
+
+    <!-- Content Area (Right Panel) - Main Dashboard Content -->
+    <main class="content-area">
+        <!-- Corporate Branding Header -->
+        <div class="content-area__header">
+            <h2 class="content-area__title">Oil and Natural Gas Corporation Ltd.</h2>
+            <p class="content-area__subtitle">BPB PLATFORM &bull; NH&amp;BS ASSET &bull; MUMBAI OFFSHORE</p>
+        </div>
+
+        <!-- KPI Cards Grid -->
+        <section class="kpi-cards-grid" aria-label="Key performance indicators">
+            <div class="kpi-card" id="helicopter-schedule-card" role="link" aria-label="Download Daily Helicopter Schedule" tabindex="0">
+                <div class="kpi-card__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="14" y1="8" x2="34" y2="8" />
+                        <line x1="24" y1="8" x2="24" y2="14" />
+                        <ellipse cx="24" cy="20" rx="10" ry="6" />
+                        <line x1="34" y1="20" x2="42" y2="16" />
+                        <line x1="42" y1="14" x2="42" y2="18" />
+                        <line x1="14" y1="20" x2="10" y2="26" />
+                        <line x1="18" y1="26" x2="30" y2="26" />
+                        <line x1="20" y1="26" x2="18" y2="32" />
+                        <line x1="28" y1="26" x2="30" y2="32" />
+                    </svg>
+                </div>
+                <h3 class="kpi-card__title">Daily Helicopter Schedule</h3>
+                <p class="kpi-card__description">Download today's ONGC offshore helicopter schedule (.docx)</p>
+                <span class="kpi-card__unavailable-badge" aria-live="polite">Unavailable</span>
+            </div>
+        </section>
+
+        <!-- Footer with Role Indicators -->
+        <footer class="dashboard-footer" aria-label="Role indicators">
+            <div class="role-item">
+                <span class="role-badge role-badge--admin">Admin</span>
+                <span class="role-description">Open &amp; routing</span>
+            </div>
+            <div class="role-item">
+                <span class="role-badge role-badge--departments">Departments</span>
+                <span class="role-description">Reply / NIL</span>
+            </div>
+            <div class="role-item">
+                <span class="role-badge role-badge--oim">OIM</span>
+                <span class="role-description">Consolidate &amp; release</span>
+            </div>
+            <div class="role-item">
+                <span class="role-badge role-badge--viewer">Viewer</span>
+                <span class="role-description">Read &amp; export</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- All JS inline (no external CDN references) -->
+    <script>
+        // ============================================================
+        // Dashboard_Config — Admin-editable configuration
+        // Change the URL below to point to your preferred source:
+        // GitHub Pages, intranet file server, OneDrive, SharePoint, etc.
+        // ============================================================
+        const Dashboard_Config = {
+            helicopterScheduleUrl: "https://upendrach-stack.github.io/DigiBPB/files/Daily_Helicopter_Schedule.docx"
+        };
+
+        // ============================================================
+        // Card Click & Keyboard Handlers
+        // ============================================================
+        (function () {
+            const card = document.getElementById('helicopter-schedule-card');
+
+            function openSchedule() {
+                window.open(Dashboard_Config.helicopterScheduleUrl, '_blank');
+            }
+
+            card.addEventListener('click', openSchedule);
+
+            card.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openSchedule();
+                }
+            });
+        })();
+
+        // ============================================================
+        // Link Health Check
+        // Checks if the helicopter schedule URL is reachable.
+        // Uses mode: 'cors' — if CORS blocks the request, we
+        // gracefully assume the link is available. Only actual
+        // network failures trigger the unavailable state.
+        // ============================================================
+        (function () {
+            function checkLinkHealth() {
+                var card = document.getElementById('helicopter-schedule-card');
+                var url = Dashboard_Config.helicopterScheduleUrl;
+
+                fetch(url, { method: 'HEAD', mode: 'cors' })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            card.classList.add('kpi-card--unavailable');
+                        }
+                    })
+                    .catch(function (error) {
+                        // Distinguish CORS errors from real network failures.
+                        // TypeError with 'Failed to fetch' typically indicates
+                        // either a network error or CORS block. Since we cannot
+                        // reliably tell them apart, we only mark unavailable if
+                        // the browser is online and the fetch still failed.
+                        if (navigator.onLine === false) {
+                            card.classList.add('kpi-card--unavailable');
+                        }
+                        // If online but fetch failed, it's likely CORS — assume available.
+                    });
+            }
+
+            checkLinkHealth();
+        })();
+    </script>
+</body>
+</html>
